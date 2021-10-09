@@ -1,0 +1,47 @@
+import cv2
+from random import randrange
+
+#Load some pre-trained data on face frontal in opencv gitub
+trained_face_data = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
+
+#Initialize  video capture
+cap = cv2.VideoCapture(0)
+
+#Scaling Factor
+scaling_factor = 1.0
+
+#detect faces in a webcam
+while(True):
+    #Capture the current frame
+    ret, frame = cap.read()
+
+    #Resize the frame
+    frame = cv2.resize(frame, None, fx=scaling_factor, fy=scaling_factor, interpolation=cv2.INTER_AREA)
+
+   #Convert image to gray scale
+    grayscaled_fr = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+
+    #Detect Faces
+    face_coordinates = trained_face_data.detectMultiScale(grayscaled_fr)
+
+    #Draw rectangles around faces
+    for (x, y, w, h) in face_coordinates:
+        cv2.rectangle(frame, (x, y), (x+w, y+h), (randrange(256), randrange(256), randrange(256)), 2)
+        #print(face_coordinates)
+
+   
+    #Display the image
+    cv2.imshow('Webcam', frame)
+
+    #Detect if the ESC has been pressed
+    c = cv2.waitKey(1)
+    if c == 27:
+        break
+
+#Release the video capture object
+cap.release()
+
+#Close all active windows
+cv2.destroyAllWindows()
+
+print("Done")
